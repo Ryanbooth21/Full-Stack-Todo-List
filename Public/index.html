@@ -8,7 +8,7 @@
     <title>Document</title>
 </head>
     <body>
-        <h1 class="title">My Full-Stack Todo List</h1>
+        <h1 class="title">My Full-Stack Stuff and thing list</h1>
         <div id="homepage">
             <div id="ninjas"></div>
         </div>
@@ -19,19 +19,23 @@
         <!-- create React Component-->
         <script type="text/babel">
         
+
         class Ninjas extends React.Component{
             constructor(){
                 super()
                 this.state = {
                     newTodo: '',
+                    updatedTodo: '',
                     Todos: []
                 }
                 this.handleChange = this.handleChange.bind(this);
                 this.handleSubmit = this.handleSubmit.bind(this);
+                
             }
             
             componentDidMount(){
                 fetch('/api/todos').then((data)=> {
+                    
                     return data.json();
                 }).then( json => {
                     this.setState({
@@ -43,6 +47,8 @@
             handleChange = (e) => {
                this.setState({newTodo: e.target.value});
             }
+
+            
 
             handleSubmit = (e) => {
                 e.preventDefault();
@@ -62,37 +68,52 @@
                     return response.json()
                 })
                 .then((data) => {
-                 this.updateTodo(data)   
+                 this.updateTodo()   
                 })
+
             }
 
-            updateTodo = (todo) => {
+            updateTodo = () => {
                 fetch('/api/todos').then((data)=> {
                     return data.json();
                 }).then( json => {
                     this.setState({
-                        Todos: this.state.Todos.concat(todo)
+                        Todos: json
                     })
-                }, console.log(this.state))
+                })
+                .then(() => {
+                    this.setState({
+                    newTodo: ''
+                    })
+                });
             }
-            
-            
+             
+            deleteTodo = (todo) => {
+                console.log(`Deleting ${todo.name} todo!`)
+                console.log(todo._id)
+                fetch(`/api/todos/${todo._id}`, {
+                    method: 'delete',
+                })
+                .then(this.updateTodo())
+            }
             render() {
                 let TodoList = this.state.Todos;
                 TodoList = TodoList.map((todo, index)=> {
                     return(
-                        <li key={index}>
+                        <li key={index} contenteditable="true">
                             <span></span>
-                            <span className="name">{todo.name}</span>    
+                            <span  contentEditable={true} className="name">{todo.name}</span>
+                            <button onClick={()=>{this.deleteTodo(todo)}}>Delete</button>      
                         </li>
                     )
                 })
+                console.log(this.state)
                 return (
                     <div>
                         <form onSubmit={this.handleSubmit} method="post">
-                            <label>Enter Todo</label>
-                            <input type="text" value={this.state.newTodo} onChange={this.handleChange} />
-                            <input type="submit" value="submitTodos"/>
+                            <label>Enter a thing</label>
+                            <input type="text"  value={this.state.newTodo} onChange={this.handleChange} />
+                            <input type="submit" value="Submit"/>
                         </form>
                         <ul>{TodoList}</ul>
                     </div>
