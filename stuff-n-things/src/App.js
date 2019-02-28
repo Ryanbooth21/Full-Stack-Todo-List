@@ -1,17 +1,52 @@
 import React, { Component } from 'react';
-import './App.css';
+import './styles.scss'
 
 class App extends Component {
   constructor(){
     super()
     this.state = {
         newTodo: '',
-        updatedTodo: '',
-        Todos: []
+        Todos: [],
+        editing: false,
+        todoToEdit: []
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.contentEditable = React.createRef();
+    this.handleEdit = this.handleEdit.bind(this)
+}
+
+handleEdit = (index) => {
+    this.setState({editing: true})
+    
+}
+
+handleEditDone = () => {
+    this.editTodoList(this.state.todoToEdit[0], this.state.todoToEdit[1])
+    this.setState({editing: false})
+   
+}
+
+handleEditChange = e => {
+    let todos = [...this.state.Todos];
+    todos[e.target.name].name = e.target.value
+    this.setState({Todos: todos})
+    this.setState({todoToEdit: [todos[e.target.name]._id, todos[e.target.name]]  })
+    console.log(this.state.todoToEdit)
+}
+
+
+editTodoList = (id, data) => {
+    var API_URL = process.env.REACT_APP_API_URL || `http://${window.location.hostname}:4000`;
+    fetch(`${API_URL}/api/todos/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-type' : 'application/json'
+          }
+    }).then(res=> {
+        console.log(res.json() + 'UPDATE!!')
+    })
 }
 componentDidMount(){
     var API_URL = process.env.REACT_APP_API_URL || `http://${window.location.hostname}:4000`;
@@ -36,7 +71,6 @@ componentDidMount(){
 handleChange = (e) => {
  this.setState({newTodo: e.target.value});
 }
-
 
 
 handleSubmit = (e) => {
@@ -79,6 +113,8 @@ updateTodo = () => {
   });
 }
 
+
+
 deleteTodo = (todo) => {
     var API_URL = process.env.REACT_APP_API_URL || `http://${window.location.hostname}:4000`
   fetch(`${API_URL}/api/todos/${todo._id}`, {
@@ -94,17 +130,18 @@ deleteTodo = (todo) => {
     let TodoList = this.state.Todos;
     TodoList = TodoList.map((todo, index)=> {
       return(
-          <li key={index} >
-              <span  className="name">{todo.name}</span> 
+          <li key={index}>
+              <input type="checkbox"  value={todo.name} contentEditable="true" name={todo.name}/><label>{todo.name}</label>
               <button onClick={()=>{this.deleteTodo(todo)}}>Delete</button>      
+              {this.state.editing === true ? <><input type="text" name={index} id={todo.id} onChange={this.handleEditChange}/><button onClick={this.handleEditDone}>Submit</button> </>: <button onClick={this.handleEdit}>Edit</button>}
           </li>
       )
     })
-    console.log(this.state)
+    
     return (
       <>
       <div className="App">
-        <h1 className="title">My Full-Stack Stuff and thing list</h1>
+        <h1 className="title">Stuff n' things list</h1>
       </div>
       <div>
       <form onSubmit={this.handleSubmit} method="post">
