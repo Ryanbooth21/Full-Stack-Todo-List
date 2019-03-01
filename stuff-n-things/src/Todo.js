@@ -129,9 +129,9 @@ class Todo extends Component {
       TodoList = TodoList.map((todo, index)=> {
         return(
             <li key={index}>
-                <input type="checkbox"  value={todo.name} contentEditable="true" name={todo.name}/><label>{todo.name}</label>
-                <button onClick={()=>{this.deleteTodo(todo)}}>Delete</button>      
-                {this.state.editing === true ? <><input type="text" name={index} id={todo.id} onChange={this.handleEditChange}/><button onClick={this.handleEditDone}>Submit</button> </>: <button onClick={this.handleEdit}>Edit</button>}
+                <span  value={todo.name} name={todo.name}><label>{todo.name}</label></span>
+                <button className="button delete" onClick={()=>{this.deleteTodo(todo)}}>Delete</button>      
+                {this.state.editing === true ? <><input type="text" name={index} id={todo.id} onChange={this.handleEditChange}/><button className="button" onClick={this.handleEditDone}>Submit</button> </>: <button className="button" onClick={this.handleEdit}>Edit</button>}
             </li>
         )
       })
@@ -142,10 +142,10 @@ class Todo extends Component {
           <h1 className="title">Stuff n' things list</h1>
         </div>
         <div>
-        <form onSubmit={this.handleSubmit} method="post">
+        <form id="enterThing" onSubmit={this.handleSubmit} method="post">
             <label>Enter a thing</label>
             <input type="text"  value={this.state.newTodo} onChange={this.handleChange} />
-            <input type="submit" value="Submit"/>
+            <button className="button" type="submit" value="Submit">Submit</button>
         </form>
         <ul>{this.state.Todos.length > 0 ? TodoList : <h1>LOADING TODOS!</h1>}</ul>
       </div>

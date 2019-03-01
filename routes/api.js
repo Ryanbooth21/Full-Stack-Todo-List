@@ -1,11 +1,27 @@
 const express = require('express');
 const router = express.Router();
 const Todo = require('../models/todo');
+const User = require('../models/user')
 
 //Get a list of ninjas from the database
 router.get('/todos', function(req, res, next){
     Todo.find({}).then(function(ninjas){
         res.send(ninjas);
+    })
+})
+
+router.post('/users', function(req, res, next){
+    // This creates a new Ninja schema based on the parameters of our Ninja object
+    User.create(req.body)
+    // after the ninja is created, we send it back to the user.
+        .then(function(Users){
+            res.send( Users )
+    }).catch(next)
+})
+
+router.get('/users', function(req, res, next){
+    User.find({}).then(function(user){
+        res.send(user);
     })
 })
 
