@@ -7,22 +7,29 @@ class Todo extends Component {
           newTodo: '',
           Todos: [],
           editing: false,
-          todoToEdit: []
+          todoToEdit: [],
+          beingEdited: null
       }
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
-      this.handleEdit = this.handleEdit.bind(this)
+    //   this.handleEdit = this.handleEdit.bind(this)
   }
+   todoBeingEdited = (id) => {
+      this.setState({
+          beingEdited: id,
+          editing: true
+      })
+    }
   
-  handleEdit = (index) => {
-      this.setState({editing: true})
-      
-  }
   
   handleEditDone = () => {
+    this.setState({
+        editing: false,
+        beingEdited: null
+      })
       this.editTodoList(this.state.todoToEdit[0], this.state.todoToEdit[1])
-      this.setState({editing: false})
-     
+      
+    
   }
   
   handleEditChange = e => {
@@ -72,7 +79,6 @@ class Todo extends Component {
   
   
   handleSubmit = (e) => {
-  
     e.preventDefault();
     let name = this.state.newTodo
     var API_URL = process.env.REACT_APP_API_URL || `http://${window.location.hostname}:4000`;
@@ -91,8 +97,8 @@ class Todo extends Component {
     .then((response)=> {
         return response.json()
     })
-    .then(()=> setTimeout(this.updateTodo(), 1000))
-   
+    .then(()=> this.updateTodo())
+    
   }
   
   updateTodo = () => {
@@ -108,7 +114,8 @@ class Todo extends Component {
         this.setState({
         newTodo: ''
         })
-    });
+    })
+    
   }
   
   
@@ -122,16 +129,17 @@ class Todo extends Component {
           'Content-type' : 'application/json'
       }
     },)
-    .then(()=> setTimeout(this.updateTodo(), 1000))
+    .then(()=> this.updateTodo())
   }
+
+
     render() {
       let TodoList = this.state.Todos;
       TodoList = TodoList.map((todo, index)=> {
         return(
-            <li key={index}>
-                <span  value={todo.name} name={todo.name}><label>{todo.name}</label></span>
-                <button className="button delete" onClick={()=>{this.deleteTodo(todo)}}>Delete</button>      
-                {this.state.editing === true ? <><input type="text" name={index} id={todo.id} onChange={this.handleEditChange}/><button className="button" onClick={this.handleEditDone}>Submit</button> </>: <button className="button" onClick={this.handleEdit}>Edit</button>}
+            <li key={index}  >
+                {this.state.beingEdited === todo._id ? null : <> <span  value={todo.name} name={todo.name}><label onClick={()=>this.todoBeingEdited(todo._id)}>{todo.name}</label></span><button className="button delete" onClick={()=>{this.deleteTodo(todo)}}>Delete</button></> }     
+                { this.state.beingEdited === todo._id ? <><input type="text" name={index} id={todo.id} onChange={this.handleEditChange}/><button className="button" onClick={()=>{this.handleEditDone()}}>Submit</button> </>: null }
             </li>
         )
       })
@@ -139,11 +147,11 @@ class Todo extends Component {
       return (
         <>
         <div className="App">
-          <h1 className="title">Stuff n' things list</h1>
+          <h1 className="title">Hello world!<br/> My Todo list</h1>
         </div>
-        <div>
+        <div id="todoContainer">
         <form id="enterThing" onSubmit={this.handleSubmit} method="post">
-            <label>Enter a thing</label>
+            <label>Enter a thing</label><br/>
             <input type="text"  value={this.state.newTodo} onChange={this.handleChange} />
             <button className="button" type="submit" value="Submit">Submit</button>
         </form>

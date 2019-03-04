@@ -23,9 +23,9 @@ class App extends Component {
     }
   render() {
     return (
-    <>  
+    <div id="mainContainer">  
         {this.state.loggedIn === true ? <><Todo/><UserLogOut logOut={this.logOut}/></> : <UserLogin logIn={this.logIn}/> }
-    </>
+    </div>
     );
   }
 }
