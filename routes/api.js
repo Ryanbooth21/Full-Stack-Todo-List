@@ -3,17 +3,14 @@ const router = express.Router();
 const Todo = require('../models/todo');
 const User = require('../models/user')
 
-//Get a list of ninjas from the database
 router.get('/todos', function(req, res, next){
-    Todo.find({}).then(function(ninjas){
-        res.send(ninjas);
+    Todo.find({}).then(function(todos){
+        res.send(todos);
     })
 })
 
 router.post('/users', function(req, res, next){
-    // This creates a new Ninja schema based on the parameters of our Ninja object
     User.create(req.body)
-    // after the ninja is created, we send it back to the user.
         .then(function(Users){
             res.send( Users )
     }).catch(next)
@@ -26,25 +23,23 @@ router.get('/users', function(req, res, next){
 })
 
 router.post('/todos', function(req, res, next){
-    // This creates a new Ninja schema based on the parameters of our Ninja object
     Todo.create(req.body)
-    // after the ninja is created, we send it back to the user.
-        .then(function(ninja){
-            res.send( ninja )
+        .then(function(todo){
+            res.send( todo )
     }).catch(next)
 })
 
 router.put('/todos/:id', function(req, res, next){
     Todo.findByIdAndUpdate({_id: req.params.id}, req.body).then(function(){
-        Ninja.findOne({_id: req.params.id}).then(function(ninja){
-            res.send(ninja)
+        Todo.findOne({_id: req.params.id}).then(function(todo){
+            res.send(todo)
         })
     })
 })
 
 router.delete('/todos/:id', function(req, res, next){
-    Todo.findByIdAndRemove({_id: req.params.id}).then(function(ninja){
-        res.send(ninja)
+    Todo.findByIdAndRemove({_id: req.params.id}).then(function(todo){
+        res.send(todo)
     })
     res.send({type: 'DELETE'})
 })

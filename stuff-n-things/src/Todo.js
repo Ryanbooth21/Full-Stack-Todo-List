@@ -6,7 +6,6 @@ class Todo extends Component {
       this.state = {
           newTodo: '',
           Todos: [],
-          editing: false,
           todoToEdit: [],
           beingEdited: null
       }
@@ -17,19 +16,15 @@ class Todo extends Component {
    todoBeingEdited = (id) => {
       this.setState({
           beingEdited: id,
-          editing: true
       })
     }
   
   
   handleEditDone = () => {
     this.setState({
-        editing: false,
         beingEdited: null
       })
       this.editTodoList(this.state.todoToEdit[0], this.state.todoToEdit[1])
-      
-    
   }
   
   handleEditChange = e => {
@@ -37,9 +32,7 @@ class Todo extends Component {
       todos[e.target.name].name = e.target.value
       this.setState({Todos: todos})
       this.setState({todoToEdit: [todos[e.target.name]._id, todos[e.target.name]]  })
-      console.log(this.state.todoToEdit)
   }
-  
   
   editTodoList = (id, data) => {
       var API_URL = process.env.REACT_APP_API_URL || `http://${window.location.hostname}:4000`;
@@ -97,8 +90,7 @@ class Todo extends Component {
     .then((response)=> {
         return response.json()
     })
-    .then(()=> this.updateTodo())
-    
+    .then(()=> this.updateTodo());  
   }
   
   updateTodo = () => {
